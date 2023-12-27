@@ -16,8 +16,8 @@ const summoner = await getSummonerName()
 ///
 
 function isInMyTeam(currentQueue) {
-    const dodgeList = DataStore.get('dodgelist', [])
-    const targets = currentQueue.filter(name => dodgeList.includes(name))
+    const dodgeList = DataStore.get('dodgelist', []).map(name => name.toLowerCase())
+    const targets = currentQueue.filter(name => dodgeList.includes(name.toLowerCase()))
 
     return targets
 }
@@ -43,7 +43,7 @@ async function updateLobbyState(message) {
         await delay(5000)
 
         const players = await playersInLobby()
-        const names = players.filter(name => name !== summoner)
+        const names = players//.filter(name => name !== summoner)
 
         const list = isInMyTeam(names)
 

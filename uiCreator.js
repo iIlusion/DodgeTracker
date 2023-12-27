@@ -142,7 +142,7 @@ const UI = {
         input.style.marginBottom = '12px'
 
         searchbox.type = 'search'
-        searchbox.placeholder = "Player Name"
+        searchbox.placeholder = "Player Name#TAG"
         searchbox.name = 'name'
         searchbox.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
