@@ -43,7 +43,7 @@ async function updateLobbyState(message) {
         await delay(5000)
 
         const players = await playersInLobby()
-        const names = players//.filter(name => name !== summoner)
+        const names = players.filter(name => name !== summoner)
 
         const list = isInMyTeam(names)
 
