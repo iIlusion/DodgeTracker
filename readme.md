@@ -9,4 +9,5 @@
 - Write the player Name#TAG and press enter
 
 ## Credits
-[Seiku](https://github.com/vergonha) (First Version)
+[Seiku](https://github.com/vergonha) - First Version
+@unproductive - post game menu button

@@ -3,8 +3,6 @@ import { getChampionSelectChatInfo, postMessageToChat } from "./chatService";
 import { createSettingsUi, createTabSettings } from "./uiSettings";
 import { addButtonPostGame } from "./uiPostGame";
 
-import './index.css'
-
 const delay = (t) => new Promise((r) => setTimeout(r, t))
 
 let summoner;
@@ -65,4 +63,10 @@ export async function load() {
     summoner = await getSummonerName()
     
     createSettingsUi()
+
+    let css = new URL('./icon.css', import.meta.url).href
+    let link = document.createElement('link')
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('href', css);
+    document.body.appendChild(link)
 }
