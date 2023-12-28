@@ -116,6 +116,9 @@ export function createTabSettings(context) {
             }
             return builder
         }
+
+
+        
     }))
 }
 
@@ -152,9 +155,9 @@ const UI = {
                     }
                 }
 
-                const data = DataStore.get('dodgelist')
-                if (data.includes(input.value)) {
-                    const removed = data.filter(name => name !== input.value)
+                const data = DataStore.get('dodgelist').map(n => n.toLowerCase())
+                if (data.includes(input.value.toLocaleLowerCase())) {
+                    const removed = data.filter(name => name.toLowerCase() !== input.value.toLowerCase())
                     DataStore.set('dodgelist', removed)
                     Toast.error(`Removed ${input.value} from the Dodge List`)
                 } else {

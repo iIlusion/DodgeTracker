@@ -1,8 +1,13 @@
 import { observeQueue, create } from "./tracker";
 import { getChampionSelectChatInfo, postMessageToChat } from "./chatService";
-import { createSettingsUi, createTabSettings } from "./uiCreator";
+import { createSettingsUi, createTabSettings } from "./uiSettings";
+import { addButtonPostGame } from "./uiPostGame";
+
+import './index.css'
 
 const delay = (t) => new Promise((r) => setTimeout(r, t))
+
+let summoner;
 
 async function getSummonerName() {
     const res = await fetch('/lol-summoner/v1/current-summoner')
@@ -10,10 +15,6 @@ async function getSummonerName() {
 
     return data.gameName + "#" + data.tagLine
 }
-
-/// Importante
-const summoner = await getSummonerName()
-///
 
 function isInMyTeam(currentQueue) {
     const dodgeList = DataStore.get('dodgelist', []).map(name => name.toLowerCase())
@@ -25,7 +26,8 @@ function isInMyTeam(currentQueue) {
 async function playersInLobby(){
 
     // Funfact: Se o cara tiver net movida à lenha, não vai puxar aqui pq ele ainda não vai ter conectado.
-    const lobby = await create("get", "//riotclient/chat/v5/participants/champ-select")
+    const lobby = await create("get", "//riotclient/chat/v5/participants")
+    console.log(lobby)
     const names = []
 
     for (const player of lobby.participants) { 
@@ -35,33 +37,32 @@ async function playersInLobby(){
     return names
 }
 
-async function updateLobbyState(message) { 
-    const data = JSON.parse(message.data)
-    const phase = data[2]
-
-    if(phase.data == "ChampSelect") {
-        await delay(5000)
-
-        const players = await playersInLobby()
-        const names = players.filter(name => name !== summoner)
-
-        const list = isInMyTeam(names)
-
-        const chatInfo = await getChampionSelectChatInfo();
-
-        if (list.length === 0) return postMessageToChat(chatInfo.id, `DodgeTracker: No players detected`)
-
-        for (const player of list) {
-            postMessageToChat(chatInfo.id, `DodgeTracker: ${player} detected`)
-        }
-     }
-}
-
 export function init(context) {
     createTabSettings(context)
+    addButtonPostGame(context)
+
+    context.socket.observe('/lol-gameflow/v1/gameflow-phase', async (data) => {
+        if(data.data == "ChampSelect") {
+            await delay(5000)
+    
+            const players = await playersInLobby()
+            const names = players.filter(name => name !== summoner)
+    
+            const list = isInMyTeam(names)
+    
+            const chatInfo = await getChampionSelectChatInfo();
+    
+            if (list.length === 0) return postMessageToChat(chatInfo.id, `DodgeTracker: No players detected`)
+    
+            for (const player of list) {
+                postMessageToChat(chatInfo.id, `DodgeTracker: ${player} detected`)
+            }
+         }
+    })
 }
 
-export function load() {
-    observeQueue(updateLobbyState)
+export async function load() {
+    summoner = await getSummonerName()
+    
     createSettingsUi()
 }

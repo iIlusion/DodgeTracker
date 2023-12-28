@@ -1,0 +1,8 @@
+.scoreboard-row-actions-menu-component .player-actions-menu-container .player-action-container.dlAction .player-action-icon {
+    background-color: #FFAA00;
+    -webkit-mask-image: url(./assets/scoreboard-action-block.png);
+}
+
+.scoreboard-row-actions-menu-component .player-actions-menu-container .player-action-container.dlAction .player-action-label {
+    color: #FFAA00;
+}
