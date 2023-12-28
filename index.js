@@ -25,10 +25,11 @@ async function playersInLobby(){
 
     // Funfact: Se o cara tiver net movida à lenha, não vai puxar aqui pq ele ainda não vai ter conectado.
     const lobby = await create("get", "//riotclient/chat/v5/participants")
-    console.log(lobby)
+    const participants = lobby.participants.filter(participant => participant.cid.includes('champ-select'));
+
     const names = []
 
-    for (const player of lobby.participants) { 
+    for (const player of participants) { 
         names.push(player.game_name + "#" + player.game_tag)
     }
 
@@ -44,7 +45,7 @@ export function init(context) {
             await delay(5000)
     
             const players = await playersInLobby()
-            const names = players.filter(name => name !== summoner)
+            const names = players.filter(name => name.toLowerCase() !== summoner.toLowerCase())
     
             const list = isInMyTeam(names)
     
