@@ -22,12 +22,13 @@ export function addButtonPostGame(context) {
 
                     if (classNames[0] === 'scoreboard-row-actions-menu-component') {
                         // TODO: Proper check
-                        if (this.__IS_HOOKED) {
+                        const proto = result.proto()
+
+                        if (proto.__IS_HOOKED) {
                             return result
                         }
-                        this.__IS_HOOKED = true
+                        proto.__IS_HOOKED = true
 
-                        const proto = result.proto()
                         const originalActionOptions = proto.actionOptions._getter
                         proto.actionOptions._getter = function() {
                             const result = originalActionOptions.apply(this, arguments)
@@ -58,11 +59,48 @@ export function addButtonPostGame(context) {
                                     DataStore.set('dodgelist', data)
                                     leagueToast(`Added ${playerName} to the Dodge List`)
                                 }
-
 								return
 							}
 
                             return originalButtonClick.apply(this, arguments)
+                        }
+                    } else if (classNames[0] === 'player-history-object') {
+                        const proto = result.proto()
+
+                        if (proto.__IS_HOOKED) {
+                            return result
+                        }
+                        proto.__IS_HOOKED = true
+                        
+                        const originalMenuItemModal = proto.getMenuItemModel
+                        proto.getMenuItemModel = function() {
+                            const result = originalMenuItemModal.apply(this, arguments)
+
+                            const isLocalSummoner = this.get('summonerId') == this.get('session.summonerId')
+                            if (!isLocalSummoner) {
+                                result.push({
+                                    label: 'Add to dodge list',
+                                    target: this,
+                                    action: function() {
+                                        const player = this.get('playerNameFull')
+                                        const playerName = `${player.split('#')[0].slice(0, -1)}#${player.split('#')[1]}`
+
+                                        const data = DataStore.get('dodgelist').map(n => n.toLowerCase())
+                                        if (data.includes(playerName.toLowerCase())) {
+                                            const removed = data.filter(name => name.toLowerCase() !== playerName.toLowerCase())
+                                            DataStore.set('dodgelist', removed)
+                                            leagueToast(`Removed ${playerName} from the Dodge List`)
+                                        } else {
+                                            data.push(playerName)
+                                            DataStore.set('dodgelist', data)
+                                            leagueToast(`Added ${playerName} to the Dodge List`)
+                                        }
+                                        return
+                                    }
+                                })
+
+                                return result
+                            }
                         }
                     }
 
