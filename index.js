@@ -3,6 +3,8 @@ import { getChampionSelectChatInfo, postMessageToChat } from "./chatService";
 import { createSettingsUi, createTabSettings } from "./uiSettings";
 import { addButtonPostGame } from "./uiPostGame";
 
+if (!DataStore.get('dodgelist')) DataStore.set('dodgelist', [])
+ 
 const delay = (t) => new Promise((r) => setTimeout(r, t))
 
 let summoner;

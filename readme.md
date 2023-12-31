@@ -21,4 +21,4 @@
 
 ## Credits
 - [Seiku](https://github.com/vergonha) - First Version 
-- @unproductive - post game menu button
+- @unproductive - post game and match history menu button
